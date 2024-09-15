@@ -152,42 +152,52 @@ class Scout:
         prefixes = custom_prefixes if custom_prefixes is not None else common_prefixes
         return [f"{prefix}@{domain}" for prefix in prefixes]
 
-    def generate_email_variants(self, names: List[str], domain: str, normalize: bool = True) -> List[str]:
-        """
-        Generate a set of email address variants based on a list of names for a given domain.
+    def generate_email_variants(self, first_name: str, last_name: str, domain: str, normalize: bool = True) -> List[str]:
+    """
+    Generate all possible email variants given first name, last name, and domain.
 
-        This function creates combinations of the provided names, both with and without dots
-        between them, and also includes individual names and their first initials.
+    Args:
+    first_name (str): The first name.
+    last_name (str): The last name.
+    domain (str): The domain for the email.
+    normalize (bool, optional): If True, normalize the names to email-friendly format.
 
-        Args:
-        names (List[str]): A list of names to combine into email address variants.
-        domain (str): The domain to be appended to each email variant.
-        normalize (bool, optional): If True, normalize the prefixes to email-friendly format.
+    Returns:
+    List[str]: A list of possible email variants.
+    """
+    variants: Set[str] = set()
 
-        Returns:
-        List[str]: A list of unique email address variants.
-        """
-        variants: Set[str] = set()
+    if normalize:
+        first_name = self.normalize_name(first_name)
+        last_name = self.normalize_name(last_name)
 
-        assert False not in [isinstance(i, str) for i in names]
+    first_initial = first_name[0]
+    last_initial = last_name[0]
+    
+    separators = ['', '.', '_', '-']
+    initials = [first_initial, last_initial]
 
-        if normalize:
-            normalized_names = [self.normalize_name(name) for name in names]
-            names = normalized_names
+    # Generate combinations
+    for sep1 in separators:
+        for sep2 in separators:
+            variants.add(f"{first_name}{sep1}{last_name}")
+            variants.add(f"{last_name}{sep1}{first_name}")
+            variants.add(f"{first_initial}{sep1}{last_name}")
+            variants.add(f"{first_name}{sep1}{last_initial}")
+            variants.add(f"{first_initial}{sep2}{last_initial}")
+            variants.add(f"{last_initial}{sep2}{first_initial}")
 
-        # Generate combinations of different lengths
-        for r in range(1, len(names) + 1):
-            for name_combination in itertools.permutations(names, r):
-                # Join the names in the combination with and without a dot
-                variants.add(''.join(name_combination))
-                variants.add('.'.join(name_combination))
+    # Add individual names and initials
+    variants.add(first_name)
+    variants.add(last_name)
+    variants.add(f"{first_initial}{last_name}")
+    variants.add(f"{first_name}{last_initial}")
+    variants.add(f"{last_initial}{first_initial}")
+    variants.add(f"{first_name[0]}{last_name}")
+    
+    # Return the email addresses with the domain attached
+    return [f"{variant}@{domain}" for variant in variants]
 
-        # Add individual names (and their first initials) as variants
-        for name in names:
-            variants.add(name)
-            variants.add(name[0])
-
-        return [f"{variant}@{domain}" for variant in variants]
 
 
     def find_valid_emails(self,
