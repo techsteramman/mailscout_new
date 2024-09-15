@@ -153,18 +153,6 @@ class Scout:
         return [f"{prefix}@{domain}" for prefix in prefixes]
 
     def generate_email_variants(self, first_name: str, last_name: str, domain: str, normalize: bool = True) -> List[str]:
-    """
-    Generate all possible email variants given first name, last name, and domain.
-
-    Args:
-    first_name (str): The first name.
-    last_name (str): The last name.
-    domain (str): The domain for the email.
-    normalize (bool, optional): If True, normalize the names to email-friendly format.
-
-    Returns:
-    List[str]: A list of possible email variants.
-    """
     variants: Set[str] = set()
 
     if normalize:
