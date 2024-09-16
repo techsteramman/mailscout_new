@@ -155,38 +155,37 @@ class Scout:
     def generate_email_variants(self, first_name: str, last_name: str, domain: str, normalize: bool = True) -> List[str]:
         variants: Set[str] = set()
     
+        # Normalize names if required
         if normalize:
             first_name = self.normalize_name(first_name)
             last_name = self.normalize_name(last_name)
     
         first_initial = first_name[0]
         last_initial = last_name[0]
-        
-        separators = ['', '.', '_', '-']
-        initials = [first_initial, last_initial]
     
-        # Generate combinations
+        # Define separators to use in the combinations
+        separators = ['', '.', '_', '-']
+    
+        # Generate combinations of first and last names with different separators
         for sep1 in separators:
             for sep2 in separators:
-                variants.add(f"{first_name}{sep1}{last_name}")
-                variants.add(f"{last_name}{sep1}{first_name}")
-                variants.add(f"{first_initial}{sep1}{last_name}")
-                variants.add(f"{first_name}{sep1}{last_initial}")
-                variants.add(f"{first_initial}{sep2}{last_initial}")
-                variants.add(f"{last_initial}{sep2}{first_initial}")
+                variants.add(f"{first_name}{sep1}{last_name}")     # john.doe
+                variants.add(f"{last_name}{sep1}{first_name}")     # doe.john
+                variants.add(f"{first_initial}{sep1}{last_name}")  # j.doe
+                variants.add(f"{first_name}{sep1}{last_initial}")  # john.d
+                variants.add(f"{first_initial}{sep2}{last_initial}") # j.d
+                variants.add(f"{last_initial}{sep2}{first_initial}") # d.j
     
-        # Add individual names and initials
-        variants.add(first_name)
-        variants.add(last_name)
-        variants.add(f"{first_initial}{last_name}")
-        variants.add(f"{first_name}{last_initial}")
-        variants.add(f"{last_initial}{first_initial}")
-        variants.add(f"{first_name[0]}{last_name}")
-        
-        # Return the email addresses with the domain attached
+        # Add additional individual names and initials without separators
+        variants.add(first_name)                # john
+        variants.add(last_name)                 # doe
+        variants.add(f"{first_initial}{last_name}")  # jdoe
+        variants.add(f"{first_name}{last_initial}")  # johnd
+        variants.add(f"{last_initial}{first_initial}")  # dj
+        variants.add(f"{first_name[0]}{last_name}")    # jdoe
+    
+        # Attach domain to all variants
         return [f"{variant}@{domain}" for variant in variants]
-
-
 
     def find_valid_emails(self,
                         domain: str, 
