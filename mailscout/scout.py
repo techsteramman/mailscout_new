@@ -153,38 +153,38 @@ class Scout:
         return [f"{prefix}@{domain}" for prefix in prefixes]
 
     def generate_email_variants(self, first_name: str, last_name: str, domain: str, normalize: bool = True) -> List[str]:
-    variants: Set[str] = set()
-
-    if normalize:
-        first_name = self.normalize_name(first_name)
-        last_name = self.normalize_name(last_name)
-
-    first_initial = first_name[0]
-    last_initial = last_name[0]
+        variants: Set[str] = set()
     
-    separators = ['', '.', '_', '-']
-    initials = [first_initial, last_initial]
-
-    # Generate combinations
-    for sep1 in separators:
-        for sep2 in separators:
-            variants.add(f"{first_name}{sep1}{last_name}")
-            variants.add(f"{last_name}{sep1}{first_name}")
-            variants.add(f"{first_initial}{sep1}{last_name}")
-            variants.add(f"{first_name}{sep1}{last_initial}")
-            variants.add(f"{first_initial}{sep2}{last_initial}")
-            variants.add(f"{last_initial}{sep2}{first_initial}")
-
-    # Add individual names and initials
-    variants.add(first_name)
-    variants.add(last_name)
-    variants.add(f"{first_initial}{last_name}")
-    variants.add(f"{first_name}{last_initial}")
-    variants.add(f"{last_initial}{first_initial}")
-    variants.add(f"{first_name[0]}{last_name}")
+        if normalize:
+            first_name = self.normalize_name(first_name)
+            last_name = self.normalize_name(last_name)
     
-    # Return the email addresses with the domain attached
-    return [f"{variant}@{domain}" for variant in variants]
+        first_initial = first_name[0]
+        last_initial = last_name[0]
+        
+        separators = ['', '.', '_', '-']
+        initials = [first_initial, last_initial]
+    
+        # Generate combinations
+        for sep1 in separators:
+            for sep2 in separators:
+                variants.add(f"{first_name}{sep1}{last_name}")
+                variants.add(f"{last_name}{sep1}{first_name}")
+                variants.add(f"{first_initial}{sep1}{last_name}")
+                variants.add(f"{first_name}{sep1}{last_initial}")
+                variants.add(f"{first_initial}{sep2}{last_initial}")
+                variants.add(f"{last_initial}{sep2}{first_initial}")
+    
+        # Add individual names and initials
+        variants.add(first_name)
+        variants.add(last_name)
+        variants.add(f"{first_initial}{last_name}")
+        variants.add(f"{first_name}{last_initial}")
+        variants.add(f"{last_initial}{first_initial}")
+        variants.add(f"{first_name[0]}{last_name}")
+        
+        # Return the email addresses with the domain attached
+        return [f"{variant}@{domain}" for variant in variants]
 
 
 
